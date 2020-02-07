@@ -172,7 +172,9 @@ void OnTick()
       if(ArraySize(exitBarNums) > 2 && (barNum == exitBarNums[ArraySize(exitBarNums)-1] 
       || barNum == exitBarNums[ArraySize(exitBarNums)-2]
       || barNum == exitBarNums[ArraySize(exitBarNums)-3])){
-         CloseRecentPosition();
+         CloseRecentPosition(exitBarNums[ArraySize(exitBarNums)-1]);
+         CloseRecentPosition(exitBarNums[ArraySize(exitBarNums)-2]);
+         CloseRecentPosition(exitBarNums[ArraySize(exitBarNums)-3]);
          //while(!CloseRecentPosition()){
          //   Sleep(10);
          //}
@@ -180,7 +182,7 @@ void OnTick()
       
          
       if(longCond && !shortCond){
-         BuyAsync(Lots);
+         BuyAsync(Lots,barNum);
          //while(!BuyAsync(Lots)){
             //Sleep(10);
          //}
@@ -191,7 +193,7 @@ void OnTick()
       }
       
       if(shortCond && !longCond){
-         SellAsync(Lots);
+         SellAsync(Lots,barNum);
          Alert("Short Before Array size: ",ArraySize(exitBarNums));
          ArrayResize(exitBarNums,ArraySize(exitBarNums)+1);
          Alert("Short After Array size: ",ArraySize(exitBarNums));
@@ -200,10 +202,10 @@ void OnTick()
    }
 }
 
-bool BuyAsync(double volume){
+bool BuyAsync(double volume, int magic){
    MqlTradeRequest req={0};
    req.action      =TRADE_ACTION_DEAL;
-   req.magic       =MagicNumber;
+   req.magic       =magic;
    req.symbol      =_Symbol;
    req.volume      =volume;
    req.price       =SymbolInfoDouble(req.symbol,SYMBOL_ASK);
@@ -216,11 +218,11 @@ bool BuyAsync(double volume){
    return(OrderSendAsync(req,res));
 }
 
-bool SellAsync(double volume){
+bool SellAsync(double volume, int magic){
    MqlTradeRequest req={0};
    req.action      =TRADE_ACTION_DEAL;
    req.symbol      =_Symbol;
-   req.magic       =MagicNumber;
+   req.magic       =magic;
    req.volume      =volume;
    req.type        =ORDER_TYPE_SELL;
    req.price       =SymbolInfoDouble(req.symbol,SYMBOL_BID);
@@ -230,7 +232,7 @@ bool SellAsync(double volume){
    return(OrderSendAsync(req,res));
 }
 
-bool CloseRecentPosition()
+bool CloseRecentPosition(int Magic)
   {
    MqlTradeRequest req;
    MqlTradeResult  res;
@@ -243,7 +245,7 @@ bool CloseRecentPosition()
       ulong  magic=PositionGetInteger(POSITION_MAGIC);                                  // MagicNumber of the position
       double volume=PositionGetDouble(POSITION_VOLUME);                                 // volume of the position
       ENUM_POSITION_TYPE type=(ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);    // type of the position
-      if(magic==MagicNumber)
+      if(magic==Magic)
         {
          ZeroMemory(req);
          ZeroMemory(res);
