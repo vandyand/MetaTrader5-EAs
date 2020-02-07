@@ -38,7 +38,7 @@ bool shortCond = false;
 bool exit = false;
 
 int barNum = 0;
-int exitBarNums[1];
+int exitBarNums[];
 bool LRE0, LRE1, SRE0, SRE1 = false;
 
 double Lots = 0.01;
@@ -123,7 +123,7 @@ void OnTick()
       //double Rel5 = MA5 / Price5;
       //double Rel6 = MA6 / Price6;
       
-      Alert(symbols[0],MA1,symbols[1],MA2,symbols[2],MA3,symbols[3],MA4,symbols[4],symbols[5]);
+      //Alert(symbols[0],MA1,symbols[1],MA2,symbols[2],MA3,symbols[3],MA4,symbols[4],symbols[5]);
       
       
       double Ask = NormalizeDouble(SymbolInfoDouble(_Symbol,SYMBOL_ASK),_Digits);
@@ -169,7 +169,9 @@ void OnTick()
       }
       
       
-      if(barNum in exitBarNum){
+      if(ArraySize(exitBarNums) > 2 && (barNum == exitBarNums[ArraySize(exitBarNums)-1] 
+      || barNum == exitBarNums[ArraySize(exitBarNums)-2]
+      || barNum == exitBarNums[ArraySize(exitBarNums)-3])){
          CloseRecentPosition();
          //while(!CloseRecentPosition()){
          //   Sleep(10);
@@ -177,21 +179,23 @@ void OnTick()
       }
       
          
-      if(longCond && !shortCond && CurrentOpenPositions(MagicNumber) < 1){
+      if(longCond && !shortCond){
          BuyAsync(Lots);
          //while(!BuyAsync(Lots)){
             //Sleep(10);
          //}
-         Alert("Array size: ",ArraySize(exitBarNums));
+         Alert("Long Before Array size: ",ArraySize(exitBarNums));
          ArrayResize(exitBarNums,ArraySize(exitBarNums)+1);
-         exitBarNum[ArraySize(exitBarNums)] = open_bars + barNum;
+         Alert("Long After Array size: ",ArraySize(exitBarNums));
+         exitBarNums[ArraySize(exitBarNums)-1] = open_bars + barNum;
       }
       
-      if(shortCond && !longCond && CurrentOpenPositions(MagicNumber) < 1){
+      if(shortCond && !longCond){
          SellAsync(Lots);
-         Alert("Array size: ",ArraySize(exitBarNums));
+         Alert("Short Before Array size: ",ArraySize(exitBarNums));
          ArrayResize(exitBarNums,ArraySize(exitBarNums)+1);
-         exitBarNum[ArraySize(exitBarNums)] = open_bars + barNum;
+         Alert("Short After Array size: ",ArraySize(exitBarNums));
+         exitBarNums[ArraySize(exitBarNums)-1] = open_bars + barNum;
       }
    }
 }
