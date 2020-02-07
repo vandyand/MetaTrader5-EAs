@@ -3,24 +3,26 @@
 
 CTrade trade;
 
+
 input int ma_period1 = 0;
 input int ma_period2 = 1;
 input int ma_period3 = 0;
 input int ma_period4 = 1;
-input int ma_period5 = 0;
-input int ma_period6 = 1;
+//input int ma_period5 = 0;
+//input int ma_period6 = 1;
 input int ma_shift1 = 0;
 input int ma_shift2 = 1;
 input int ma_shift3 = 0;
 input int ma_shift4 = 1;
-input int ma_shift5 = 0;
-input int ma_shift6 = 1;
+//input int ma_shift5 = 0;
+//input int ma_shift6 = 1;
 input int sym1 = 0;
 input int sym2 = 0;
 input int sym3 = 0;
 input int sym4 = 0;
-input int sym5 = 0;
-input int sym6 = 0;
+//input int sym5 = 0;
+//input int sym6 = 0;
+input int open_bars = 10;
 
 int MagicNumber = 200;
 
@@ -29,7 +31,6 @@ int slippage = 100;
 bool EquityCrunch = false;
 bool LongSignal = false;
 bool ShortSignal = false;
-bool LRE0, LRE1, SRE0, SRE1 = false;
 bool stopTrading = false;
 
 bool longCond = false;
@@ -37,6 +38,8 @@ bool shortCond = false;
 bool exit = false;
 
 int barNum = 0;
+int exitBarNum = 0;
+bool LRE0, LRE1, SRE0, SRE1 = false;
 
 double Lots = 0.01;
 
@@ -50,14 +53,14 @@ int maHandle1;
 int maHandle2;
 int maHandle3;
 int maHandle4;
-int maHandle5;
-int maHandle6;
+//int maHandle5;
+//int maHandle6;
 double mas1[1];
 double mas2[1];
 double mas3[1];
 double mas4[1];
-double mas5[1];
-double mas6[1];
+//double mas5[1];
+//double mas6[1];
 
 
 int OnInit(){
@@ -66,8 +69,8 @@ int OnInit(){
    maHandle2 = iMA(symbols[sym2],_Period,ma_period2,ma_shift2,MODE_SMA,PRICE_OPEN);
    maHandle3 = iMA(symbols[sym3],_Period,ma_period3,ma_shift3,MODE_SMA,PRICE_OPEN);
    maHandle4 = iMA(symbols[sym4],_Period,ma_period4,ma_shift4,MODE_SMA,PRICE_OPEN);
-   maHandle5 = iMA(symbols[sym5],_Period,ma_period5,ma_shift5,MODE_SMA,PRICE_OPEN);
-   maHandle6 = iMA(symbols[sym6],_Period,ma_period6,ma_shift6,MODE_SMA,PRICE_OPEN);
+   //maHandle5 = iMA(symbols[sym5],_Period,ma_period5,ma_shift5,MODE_SMA,PRICE_OPEN);
+   //maHandle6 = iMA(symbols[sym6],_Period,ma_period6,ma_shift6,MODE_SMA,PRICE_OPEN);
    
    return(INIT_SUCCEEDED);
 }
@@ -76,7 +79,7 @@ int OnInit(){
 void OnTick()
 {  
    //Alert(TimeLocal(), ", ", TimeCurrent(), ", ", TimeToString(TimeCurrent()));
-
+/*
    MqlDateTime tm;
    TimeCurrent(tm);
    //Alert(tm.day_of_week, ", ", tm.hour, ", ", tm.min);
@@ -86,41 +89,43 @@ void OnTick()
          Sleep(10);
       }
    }
-   
-   
-   CopyBuffer(maHandle1,0,0,1,mas1);
-   CopyBuffer(maHandle2,0,0,1,mas2);
-   CopyBuffer(maHandle3,0,0,1,mas3);
-   CopyBuffer(maHandle4,0,0,1,mas4);
-   CopyBuffer(maHandle5,0,0,1,mas5);
-   CopyBuffer(maHandle6,0,0,1,mas6);
-   
-   double MA1 = mas1[0];
-   double MA2 = mas2[0];
-   double MA3 = mas3[0];
-   double MA4 = mas4[0];
-   double MA5 = mas5[0];
-   double MA6 = mas6[0];
-   
-   double Price1 = NormalizeDouble(SymbolInfoDouble(symbols[sym1],SYMBOL_ASK),_Digits);
-   double Price2 = NormalizeDouble(SymbolInfoDouble(symbols[sym2],SYMBOL_ASK),_Digits);
-   double Price3 = NormalizeDouble(SymbolInfoDouble(symbols[sym3],SYMBOL_ASK),_Digits);
-   double Price4 = NormalizeDouble(SymbolInfoDouble(symbols[sym4],SYMBOL_ASK),_Digits);
-   double Price5 = NormalizeDouble(SymbolInfoDouble(symbols[sym5],SYMBOL_ASK),_Digits);
-   double Price6 = NormalizeDouble(SymbolInfoDouble(symbols[sym6],SYMBOL_ASK),_Digits);
-   
-   double Rel1 = MA1 / Price1;
-   double Rel2 = MA2 / Price2;
-   double Rel3 = MA3 / Price3;
-   double Rel4 = MA4 / Price4;
-   double Rel5 = MA5 / Price5;
-   double Rel6 = MA6 / Price6;
-   
-   Alert(symbols[0],MA1,symbols[1],MA2,symbols[2],MA3,symbols[3],MA4,symbols[4],MA5,symbols[5],MA6);
+  */ 
    
    if(Find_New_Bar()){
+      
       barNum++;
       //Alert("New Bar Found!!******************");
+      
+      CopyBuffer(maHandle1,0,0,1,mas1);
+      CopyBuffer(maHandle2,0,0,1,mas2);
+      CopyBuffer(maHandle3,0,0,1,mas3);
+      CopyBuffer(maHandle4,0,0,1,mas4);
+      //CopyBuffer(maHandle5,0,0,1,mas5);
+      //CopyBuffer(maHandle6,0,0,1,mas6);
+      
+      double MA1 = mas1[0];
+      double MA2 = mas2[0];
+      double MA3 = mas3[0];
+      double MA4 = mas4[0];
+      //double MA5 = mas5[0];
+      //double MA6 = mas6[0];
+      
+      double Price1 = NormalizeDouble(SymbolInfoDouble(symbols[sym1],SYMBOL_ASK),_Digits);
+      double Price2 = NormalizeDouble(SymbolInfoDouble(symbols[sym2],SYMBOL_ASK),_Digits);
+      double Price3 = NormalizeDouble(SymbolInfoDouble(symbols[sym3],SYMBOL_ASK),_Digits);
+      double Price4 = NormalizeDouble(SymbolInfoDouble(symbols[sym4],SYMBOL_ASK),_Digits);
+      //double Price5 = NormalizeDouble(SymbolInfoDouble(symbols[sym5],SYMBOL_ASK),_Digits);
+      //double Price6 = NormalizeDouble(SymbolInfoDouble(symbols[sym6],SYMBOL_ASK),_Digits);
+      
+      double Rel1 = MA1 / Price1;
+      double Rel2 = MA2 / Price2;
+      double Rel3 = MA3 / Price3;
+      double Rel4 = MA4 / Price4;
+      //double Rel5 = MA5 / Price5;
+      //double Rel6 = MA6 / Price6;
+      
+      Alert(symbols[0],MA1,symbols[1],MA2,symbols[2],MA3,symbols[3],MA4,symbols[4],symbols[5]);
+      
       
       double Ask = NormalizeDouble(SymbolInfoDouble(_Symbol,SYMBOL_ASK),_Digits);
       double Bid = NormalizeDouble(SymbolInfoDouble(_Symbol,SYMBOL_BID),_Digits);
@@ -130,22 +135,33 @@ void OnTick()
       double Equity = AccountInfoDouble(ACCOUNT_EQUITY);
       
       
-      if(Rel1 > Rel2){
+      LRE1 = LRE0;
+      SRE1 = SRE0;
+      
+      
+      if(Rel1 > 1 && 1 > Rel2){
+         LRE0 = true;
+      } else {
+         LRE0 = false;
+      }
+
+      if(Rel3 > 1 && 1 > Rel4){
+         SRE0 = true;
+      } else {
+         SRE0 = false;
+      }
+      
+      
+      if(!LRE1 && LRE0){
          longCond = true;
       } else {
          longCond = false;
       }
-
-      if(Rel3 > Rel4){
+      
+      if(!SRE1 && SRE0){
          shortCond = true;
       } else {
          shortCond = false;
-      }
-
-      if(Rel5 > Rel6){
-         exit = true;
-      } else {
-         exit = false;
       }
       
       if(longCond && shortCond){
@@ -154,22 +170,25 @@ void OnTick()
       }
       
       
-      if(exit){
+      if(barNum == exitBarNum){
          CloseRecentPosition();
          //while(!CloseRecentPosition()){
          //   Sleep(10);
          //}
       }
+      
          
-      if(longCond){
+      if(longCond && !shortCond && CurrentOpenPositions(MagicNumber) < 1){
          BuyAsync(Lots);
          //while(!BuyAsync(Lots)){
             //Sleep(10);
          //}
+         exitBarNum = open_bars + barNum;
       }
       
-      if(shortCond){
+      if(shortCond && !longCond && CurrentOpenPositions(MagicNumber) < 1){
          SellAsync(Lots);
+         exitBarNum = open_bars + barNum;
       }
    }
 }
@@ -241,6 +260,27 @@ bool CloseRecentPosition()
       }
    }
    return(false);
+}
+
+
+int CurrentOpenPositions(int magic_number)
+  {
+   int count = 0;
+   int total=PositionsTotal(); // number of open positions
+   for(int i=total-1; i>=0; i--)
+     {
+      ulong  position_ticket=PositionGetTicket(i);                                      // ticket of the position
+      string position_symbol=PositionGetString(POSITION_SYMBOL);                        // symbol 
+      int    digits=(int)SymbolInfoInteger(position_symbol,SYMBOL_DIGITS);              // number of decimal places
+      ulong  magic=PositionGetInteger(POSITION_MAGIC);                                  // MagicNumber of the position
+      double volume=PositionGetDouble(POSITION_VOLUME);                                 // volume of the position
+      ENUM_POSITION_TYPE type=(ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);    // type of the position
+      if(magic==magic_number)
+        {
+         count++;
+      }
+   }
+   return(count);
 }
 
 

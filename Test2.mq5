@@ -130,19 +130,19 @@ void OnTick()
       double Equity = AccountInfoDouble(ACCOUNT_EQUITY);
       
       
-      if(Rel1 > Rel2){
+      if(Rel1 > 1 && 1 > Rel2){
          longCond = true;
       } else {
          longCond = false;
       }
 
-      if(Rel3 > Rel4){
+      if(Rel3 > 1 && 1 > Rel4){
          shortCond = true;
       } else {
          shortCond = false;
       }
 
-      if(Rel5 > Rel6){
+      if(Rel5 > 1 && 1 > Rel6){
          exit = true;
       } else {
          exit = false;
