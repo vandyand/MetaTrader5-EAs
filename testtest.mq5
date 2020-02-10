@@ -38,7 +38,7 @@ bool shortCond = false;
 bool exit = false;
 
 int barNum = 0;
-int exitBarNums[];
+//int exitBarNums[];
 bool LRE0, LRE1, SRE0, SRE1 = false;
 
 double Lots = 0.01;
@@ -61,6 +61,37 @@ double mas4[1];
 //double mas5[1];
 //double mas6[1];
 
+
+class Closes{
+   private:
+   int closeBars[];
+   
+   public:
+   void Add(int closeBar){  
+      ArrayResize(closeBars,ArraySize(closeBars)+1); // Make array bigger
+      closeBars[ArraySize(closeBars)-1] = closeBar; // Add item to end of array
+   }
+   
+   void Remove(){  
+      closeBars[0] = 0; // Clear zeroth item
+      for(int i = 0; i<ArraySize(closeBars)-1; i++){
+         closeBars[i] = closeBars[i+1]; // Shift array items left
+      }
+      ArrayResize(closeBars,ArraySize(closeBars)-1); // Delete last element of array
+   }
+   
+   bool Contains(int item){
+      for(int i = 0; i<ArraySize(closeBars); i++){
+         if(closeBars[i] == item){
+            return true;
+         }
+      }
+      return false;
+   }
+};
+
+
+Closes exitBarNums;
 
 int OnInit(){
 
@@ -169,12 +200,9 @@ void OnTick()
       }
       
       
-      if(ArraySize(exitBarNums) > 2 && (barNum == exitBarNums[ArraySize(exitBarNums)-1] 
-      || barNum == exitBarNums[ArraySize(exitBarNums)-2]
-      || barNum == exitBarNums[ArraySize(exitBarNums)-3])){
-         CloseRecentPosition(exitBarNums[ArraySize(exitBarNums)-1]);
-         CloseRecentPosition(exitBarNums[ArraySize(exitBarNums)-2]);
-         CloseRecentPosition(exitBarNums[ArraySize(exitBarNums)-3]);
+      if(exitBarNums.Contains(barNum)){
+         exitBarNums.Remove();
+         CloseRecentPosition(barNum);
          //while(!CloseRecentPosition()){
          //   Sleep(10);
          //}
@@ -182,22 +210,17 @@ void OnTick()
       
          
       if(longCond && !shortCond){
-         BuyAsync(Lots,barNum);
+         exitBarNums.Add(open_bars + barNum);
+         BuyAsync(Lots,open_bars + barNum);
          //while(!BuyAsync(Lots)){
             //Sleep(10);
          //}
-         Alert("Long Before Array size: ",ArraySize(exitBarNums));
-         ArrayResize(exitBarNums,ArraySize(exitBarNums)+1);
-         Alert("Long After Array size: ",ArraySize(exitBarNums));
-         exitBarNums[ArraySize(exitBarNums)-1] = open_bars + barNum;
+         
       }
       
       if(shortCond && !longCond){
-         SellAsync(Lots,barNum);
-         Alert("Short Before Array size: ",ArraySize(exitBarNums));
-         ArrayResize(exitBarNums,ArraySize(exitBarNums)+1);
-         Alert("Short After Array size: ",ArraySize(exitBarNums));
-         exitBarNums[ArraySize(exitBarNums)-1] = open_bars + barNum;
+         exitBarNums.Add(open_bars + barNum);
+         SellAsync(Lots,open_bars + barNum);
       }
    }
 }
@@ -313,4 +336,8 @@ bool Find_New_Bar(){
 
 
 
+double OnTester(){
 
+   if(TesterStatistics(STAT_PROFIT) < 1){return(0.0);}
+   return(NormalizeDouble(TesterStatistics(STAT_PROFIT),0));
+}

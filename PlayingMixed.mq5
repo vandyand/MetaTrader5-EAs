@@ -310,9 +310,9 @@ double OnTester()
       FrameAdd("Statistics",1,0,stat_values);
      }
 //---
-   double score = get_score();
+   //double score = get_score();
    
-   return(score);
+   return(TesterStatistics(STAT_PROFIT));
   }
 
 //+--------------------------------------------------------------------+
