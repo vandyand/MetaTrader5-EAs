@@ -337,7 +337,5 @@ bool Find_New_Bar(){
 
 
 double OnTester(){
-
-   if(TesterStatistics(STAT_PROFIT) < 1){return(0.0);}
-   return(NormalizeDouble(TesterStatistics(STAT_PROFIT),0));
+   return(TesterStatistics(STAT_PROFIT));
 }
