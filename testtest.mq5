@@ -122,7 +122,7 @@ void OnTick()
   */ 
    
    if(Find_New_Bar()){
-      
+            
       barNum++;
       //Alert("New Bar Found!!******************");
       
