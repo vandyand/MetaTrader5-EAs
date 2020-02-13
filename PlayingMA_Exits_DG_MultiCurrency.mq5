@@ -2,6 +2,7 @@
 #include<Trade\Trade.mqh>
 
 CTrade trade;
+input datetime splitDate;
 
 input int ma_period1_1 = 2;
 input int ma_period1_2 = 4;
@@ -70,7 +71,6 @@ input int ma_period7_8 = 4;
 input int iter = 0;
 //input double drawDown = 0.9995;
 //input datetime splitDate;
-input bool write_to_file = false;
 input string file_name = "temp";
 int input MagicNumber = 200;
 double input Lots = 0.01;
@@ -78,7 +78,7 @@ double input Lots = 0.01;
 int slippage = 100;
 int barNum = 0;
 double stat_values[100]; // Array for testing parameters
-
+bool stopTrading = false;
 
 
 bool longPos1_, shortPos1_ = false;
@@ -314,6 +314,15 @@ int OnInit(){
 
 void OnTick()
 {
+   
+   Alert("TimeCurrent: ",TimeCurrent()," splitDate: ",splitDate," Past: ",TimeCurrent() > splitDate);
+   
+   
+   if(!stopTrading && TimeCurrent() > splitDate){
+      stopTrading = true;
+   }
+
+
 
    if(Find_New_Bar()){
       barNum++;
@@ -360,7 +369,7 @@ void OnTick()
       
       if(CurrentOpenPositions(magic1_) < 1){
          if(EnterLongSignal1_ && !EnterShortSignal1_ && !ExitLongSignal1_){
-            if(!SellAsync(Lots,magic1_,symbols[0])){Alert("Error entering long ",symbols[0],". Last error: ",GetLastError());}
+            if(!BuyAsync(Lots,magic1_,symbols[0])){Alert("Error entering long ",symbols[0],". Last error: ",GetLastError());}
             //while(!BuyAsync(Lots,symbols[0])){Sleep(100);}
             longPos1_ = true;
          }
@@ -421,7 +430,7 @@ void OnTick()
       
       if(CurrentOpenPositions(magic2_) < 1){
          if(EnterLongSignal2_ && !EnterShortSignal2_ && !ExitLongSignal2_){
-            if(!SellAsync(Lots,magic2_,symbols[1])){Alert("Error entering long ",symbols[1],". Last error: ",GetLastError());}
+            if(!BuyAsync(Lots,magic2_,symbols[1])){Alert("Error entering long ",symbols[1],". Last error: ",GetLastError());}
             //while(!BuyAsync(Lots,symbols[1])){Sleep(100);}
             longPos2_ = true;
          }
@@ -480,7 +489,7 @@ void OnTick()
       
       if(CurrentOpenPositions(magic3_) < 1){
          if(EnterLongSignal3_ && !EnterShortSignal3_ && !ExitLongSignal3_){
-            if(!SellAsync(Lots,magic3_,symbols[2])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
+            if(!BuyAsync(Lots,magic3_,symbols[2])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
             //while(!BuyAsync(Lots,symbols[0])){Sleep(100);}
             longPos3_ = true;
          }
@@ -539,7 +548,7 @@ void OnTick()
       
       if(CurrentOpenPositions(magic4_) < 1){
          if(EnterLongSignal4_ && !EnterShortSignal4_ && !ExitLongSignal4_){
-            if(!SellAsync(Lots,magic4_,symbols[3])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
+            if(!BuyAsync(Lots,magic4_,symbols[3])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
             //while(!BuyAsync(Lots,symbols[0])){Sleep(100);}
             longPos4_ = true;
          }
@@ -598,7 +607,7 @@ void OnTick()
       
       if(CurrentOpenPositions(magic5_) < 1){
          if(EnterLongSignal5_ && !EnterShortSignal5_ && !ExitLongSignal5_){
-            if(!SellAsync(Lots,magic5_,symbols[4])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
+            if(!BuyAsync(Lots,magic5_,symbols[4])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
             //while(!BuyAsync(Lots,symbols[0])){Sleep(100);}
             longPos5_ = true;
          }
@@ -657,7 +666,7 @@ void OnTick()
       
       if(CurrentOpenPositions(magic6_) < 1){
          if(EnterLongSignal6_ && !EnterShortSignal6_ && !ExitLongSignal6_){
-            if(!SellAsync(Lots,magic6_,symbols[5])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
+            if(!BuyAsync(Lots,magic6_,symbols[5])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
             //while(!BuyAsync(Lots,symbols[0])){Sleep(100);}
             longPos6_ = true;
          }
@@ -716,7 +725,7 @@ void OnTick()
       
       if(CurrentOpenPositions(magic7_) < 1){
          if(EnterLongSignal7_ && !EnterShortSignal7_ && !ExitLongSignal7_){
-            if(!SellAsync(Lots,magic7_,symbols[6])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
+            if(!BuyAsync(Lots,magic7_,symbols[6])){Alert("Error entering long ",symbols[2],". Last error: ",GetLastError());}
             //while(!BuyAsync(Lots,symbols[0])){Sleep(100);}
             longPos7_ = true;
          }
@@ -731,6 +740,16 @@ void OnTick()
       
    }
 }
+
+
+
+
+double OnTester()  {
+   
+   return(0.0);
+}
+
+
 
 bool BuyAsync(double volume, int magicNum, string symbol){
    MqlTradeRequest req={0};
@@ -821,242 +840,6 @@ int CurrentOpenPositions(int magic_number)
    }
    return(count);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-int fileHandle = 0;
-
-
-
-string name1="ma_period1_1";
-bool enable1;
-long par1,par1_start,par1_step,par1_stop;
-
-string name2="ma_period1_2";
-bool enable2;
-long par2,par2_start,par2_step,par2_stop;
-
-string name3="ma_period1_3";
-bool enable3;
-long par3,par3_start,par3_step,par3_stop;
-
-string name4="ma_period1_4";
-bool enable4;
-long par4,par4_start,par4_step,par4_stop;
-
-//+--------------------------------------------------------------------+
-//| Optimization start                                                 |
-//+--------------------------------------------------------------------+
-void OnTesterInit(){
-
-   if(write_to_file){
-      string file_dir = MQLInfoString(MQL_PROGRAM_NAME) + "-" + Symbol() + "-" + tf() + "\\";
-      fileHandle=FileOpen(file_dir+file_name+".csv",FILE_READ|FILE_WRITE|FILE_CSV|FILE_COMMON,',');
-      bool seek = FileSeek(fileHandle, 0, SEEK_END);
-
-      Print(__FUNCTION__,"(): Start Optimization \n-----------");
-
-      ParameterGetRange(name1,enable1,par1,par1_start,par1_step,par1_stop);
-      ParameterGetRange(name2,enable2,par2,par2_start,par2_step,par2_stop);
-      ParameterGetRange(name3,enable3,par3,par3_start,par3_step,par3_stop);
-      ParameterGetRange(name4,enable4,par4,par4_start,par4_step,par4_stop);
-   }
-}
-
-//+--------------------------------------------------------------------+
-//| Test completion event handler                                      |
-//+--------------------------------------------------------------------+
-double OnTester()
-  {
-//--- If writing of optimization results is enabled
-   if(write_to_file)
-     {
-      //--- Fill the array with test values
-      GetTestStatistics(stat_values);
-      //--- Create a frame
-      FrameAdd("Statistics",1,0,stat_values);
-     }
-//---
-   return(0.0);
-  }
-
-//+--------------------------------------------------------------------+
-//| Next optimization pass                                             |
-//+--------------------------------------------------------------------+
-void OnTesterPass(){
-   
-
-//--- If writing of optimization results is enabled
-   if(write_to_file){
-      string name ="";  // Public name/frame label
-      ulong  pass =0;   // Number of the optimization pass at which the frame is added
-      long   id   =0;   // Public id of the frame
-      double val  =0.0; // Single numerical value of the frame
-      //---
-      
-      while(FrameNext(pass,name,id,val,stat_values)){
-      //---
-      //Print(__FUNCTION__,"(): pass: "+IntegerToString(pass)+"; STAT_PROFIT: ",DoubleToString(stat_values[0],2));
-      
-      ulong bytes = FileWrite(fileHandle,
-         DoubleToString(stat_values[0],4),DoubleToString(stat_values[1],4),
-         DoubleToString(stat_values[2],4),DoubleToString(stat_values[3],4),
-         DoubleToString(stat_values[4],4),DoubleToString(stat_values[5],4),
-         DoubleToString(stat_values[6],4),DoubleToString(stat_values[7],0),
-         DoubleToString(stat_values[8],4),DoubleToString(stat_values[9],0),
-         DoubleToString(stat_values[10],4),DoubleToString(stat_values[11],0),
-         DoubleToString(stat_values[12],4),DoubleToString(stat_values[13],0),
-         DoubleToString(stat_values[14],4),DoubleToString(stat_values[15],4),
-         DoubleToString(stat_values[16],4),DoubleToString(stat_values[17],4),
-         DoubleToString(stat_values[18],4),DoubleToString(stat_values[19],4),
-         DoubleToString(stat_values[20],4),DoubleToString(stat_values[21],4),
-         DoubleToString(stat_values[22],4),DoubleToString(stat_values[23],4),
-         DoubleToString(stat_values[24],4),DoubleToString(stat_values[25],4),
-         DoubleToString(stat_values[26],4),DoubleToString(stat_values[27],4),
-         DoubleToString(stat_values[28],4),DoubleToString(stat_values[29],4),
-         DoubleToString(stat_values[30],0),DoubleToString(stat_values[31],0),
-         DoubleToString(stat_values[32],0),DoubleToString(stat_values[33],0),
-         DoubleToString(stat_values[34],0),DoubleToString(stat_values[35],0),
-         DoubleToString(stat_values[36],0),DoubleToString(stat_values[37],0),
-         DoubleToString(stat_values[38],0),DoubleToString(stat_values[39],0),
-         DoubleToString(stat_values[40],0),DoubleToString(stat_values[41],0),
-         DoubleToString(stat_values[42],0),DoubleToString(stat_values[43],0),
-         DoubleToString(stat_values[44],0),DoubleToString(stat_values[45],0),
-         DoubleToString(stat_values[46],0),DoubleToString(stat_values[47],0),
-         DoubleToString(stat_values[48],0));
-      }
-   }
-}
-
-//+--------------------------------------------------------------------+
-//| End of optimization                                                |
-//+--------------------------------------------------------------------+
-void OnTesterDeinit()
-  {
-   Print("-----------\n",__FUNCTION__,"(): End Optimization");
-//--- If writing of optimization results is enabled
-   if(write_to_file){
-      FileClose(fileHandle);
-   }
-  }
-
-
-//+--------------------------------------------------------------------+
-//| Filling the array with test results                                |
-//+--------------------------------------------------------------------+
-void GetTestStatistics(double &stat_array[])
-  {
-  
-   stat_array[0] = TesterStatistics(STAT_INITIAL_DEPOSIT);
-   
-   stat_array[1] = TesterStatistics(STAT_PROFIT);
-   
-   stat_array[2] = TesterStatistics(STAT_GROSS_PROFIT);
-   stat_array[3] = TesterStatistics(STAT_GROSS_LOSS);
-   stat_array[4] = TesterStatistics(STAT_MAX_PROFITTRADE);
-   stat_array[5] = TesterStatistics(STAT_MAX_LOSSTRADE);
-   
-   stat_array[6] = TesterStatistics(STAT_CONPROFITMAX);
-   stat_array[7] = TesterStatistics(STAT_CONPROFITMAX_TRADES);//int
-   stat_array[8] = TesterStatistics(STAT_MAX_CONWINS);
-   stat_array[9] = TesterStatistics(STAT_MAX_CONPROFIT_TRADES);//int
-   stat_array[10] = TesterStatistics(STAT_CONLOSSMAX);
-   stat_array[11] = TesterStatistics(STAT_CONLOSSMAX_TRADES);//int
-   stat_array[12] = TesterStatistics(STAT_MAX_CONLOSSES);
-   stat_array[13] = TesterStatistics(STAT_MAX_CONLOSS_TRADES);//int
-
-   stat_array[14] = TesterStatistics(STAT_BALANCEMIN);
-   stat_array[15] = TesterStatistics(STAT_BALANCE_DD);
-   stat_array[16] = TesterStatistics(STAT_BALANCEDD_PERCENT);
-   stat_array[17] = TesterStatistics(STAT_BALANCE_DD_RELATIVE);
-   stat_array[18] = TesterStatistics(STAT_BALANCE_DDREL_PERCENT);
-   
-   stat_array[19] = TesterStatistics(STAT_EQUITYMIN);
-   stat_array[20] = TesterStatistics(STAT_EQUITY_DD);
-   stat_array[21] = TesterStatistics(STAT_EQUITYDD_PERCENT);
-   stat_array[22] = TesterStatistics(STAT_EQUITY_DD_RELATIVE);
-   stat_array[23] = TesterStatistics(STAT_EQUITY_DDREL_PERCENT);
-   
-   stat_array[24] = TesterStatistics(STAT_EXPECTED_PAYOFF);
-   stat_array[25] = TesterStatistics(STAT_PROFIT_FACTOR)==DBL_MAX ? 0 : TesterStatistics(STAT_PROFIT_FACTOR);
-   stat_array[26] = TesterStatistics(STAT_RECOVERY_FACTOR);
-   stat_array[27] = TesterStatistics(STAT_SHARPE_RATIO);
-   stat_array[28] = TesterStatistics(STAT_MIN_MARGINLEVEL)==DBL_MAX ? 0 : TesterStatistics(STAT_MIN_MARGINLEVEL);
-   stat_array[29] = TesterStatistics(STAT_CUSTOM_ONTESTER);
-   
-   stat_array[30] = TesterStatistics(STAT_DEALS);//int
-   stat_array[31] = TesterStatistics(STAT_TRADES);//int
-   stat_array[32] = TesterStatistics(STAT_PROFIT_TRADES);//int
-   stat_array[33] = TesterStatistics(STAT_LOSS_TRADES);//int
-   stat_array[34] = TesterStatistics(STAT_SHORT_TRADES);//int
-   stat_array[35] = TesterStatistics(STAT_LONG_TRADES);//int
-   stat_array[36] = TesterStatistics(STAT_PROFIT_SHORTTRADES);//int
-   stat_array[37] = TesterStatistics(STAT_PROFIT_LONGTRADES);//int
-   stat_array[38] = TesterStatistics(STAT_PROFITTRADES_AVGCON);//int
-   stat_array[39] = TesterStatistics(STAT_LOSSTRADES_AVGCON);//int
-
-   stat_array[40]=iter;//int
-   stat_array[41]=ma_period1_1;//int
-   stat_array[42]=ma_period1_2;//int
-   stat_array[43]=ma_period1_3;//int
-   stat_array[44]=ma_period1_4;//int
-   stat_array[45]=ma_period1_5;//int
-   stat_array[46]=ma_period1_6;//int
-   stat_array[47]=ma_period1_7;//int
-   stat_array[48]=ma_period1_8;//int
-  
-  }
-
-
-
-
-string tf(){
-   switch(Period()){
-      case PERIOD_M1: return("M1");
-      case PERIOD_M2: return("M2");
-      case PERIOD_M3: return("M3");
-      case PERIOD_M4: return("M4");
-      case PERIOD_M5: return("M5");
-      case PERIOD_M6: return("M6");
-      case PERIOD_M10: return("M10");
-      case PERIOD_M15: return("M15");
-      case PERIOD_M20: return("M20");
-      case PERIOD_M30: return("M30");
-      case PERIOD_H1: return("H1");
-      case PERIOD_H2: return("H2");
-      case PERIOD_H3: return("H3");
-      case PERIOD_H4: return("H4");
-      case PERIOD_H6: return("H6");
-      case PERIOD_H8: return("H8");
-      case PERIOD_H12: return("H12");
-      case PERIOD_D1: return("D1");
-      case PERIOD_W1: return("W1");
-      case PERIOD_MN1: return("MN1");
-      default:return("Unknown timeframe");
-   }
-}
-
-
 
 // Identify new bars
 bool Find_New_Bar(){
