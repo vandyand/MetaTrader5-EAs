@@ -3,6 +3,7 @@
 
 //CTrade trade;
 input datetime splitDate;
+input double timeMultiplier = 1;
 
 input int ma_period1_1 = 2;
 input int ma_period1_2 = 4;
@@ -115,16 +116,24 @@ int OnInit(){
    return(INIT_SUCCEEDED);
 }
 
+bool STRE0,STRE1,TransitionONS = false;
 void OnTick(){
    
    Alert("TimeCurrent: ",TimeCurrent()," splitDate: ",splitDate," Past: ",TimeCurrent() > splitDate);
    
+   STRE0 = STRE1;
    
-   if(!stopTrading && TimeCurrent() > splitDate){
-      stopTrading = true;
+   if(TimeCurrent() >= splitDate){
+      STRE1 = true;
+   } else {
+      STRE1 = false;
    }
 
-
+   if(!STRE0 && STRE1){
+      TransitionONS = true;
+   } else {
+      TransitionONS = false;
+   }  
 
    if(Find_New_Bar()){
       barNum++;
@@ -165,26 +174,39 @@ void OnTick(){
       }
       
       for(int i = 0; i < 7; i++){
-         if((longPos[i] && ExitLongSignal[i]) || (shortPos[i] && ExitShortSignal[i])){
+         if((longPos[i] && ExitLongSignal[i]) || (shortPos[i] && ExitShortSignal[i]) || TransitionONS){
+            Alert("Exiting Position. Currency: ",symbols[i]," MagicNumber: ",Magic[i]," ----------------------------------------------------------");
             CloseRecentPosition(Magic[i]);
             //while(!CloseRecentPosition(symbols[0])){Sleep(100);}
             longPos[i] = false;
             shortPos[i] = false;
          }
-            
+      }
+      
+      if(TransitionONS){
+         for(int i = 0; i < 7; i++){
+            Magic[i] = Magic[i] + 100;
+         }
+      }
+      
+      for(int i = 0; i < 7; i++){
          if(CurrentOpenPositions(Magic[i]) < 1){
             if(EnterLongSignal[i] && !EnterShortSignal[i] && !ExitLongSignal[i]){
+               Alert("Entering Long Position. Currency: ",symbols[i]," MagicNumber: ",Magic[i]," *************************************************");
                if(!BuyAsync(Lots,Magic[i],symbols[i])){Alert("Error entering long ",symbols[i],". Last error: ",GetLastError());}
                //while(!BuyAsync(Lots,symbols[0])){Sleep(100);}
                longPos[i] = true;
             }
             if(EnterShortSignal[i] && !EnterLongSignal[i] && !ExitShortSignal[i]){
+               Alert("Entering Short Position. Currency: ",symbols[i]," MagicNumber: ",Magic[i]," ************************************************");
                if(!SellAsync(Lots,Magic[i],symbols[i])){Alert("Error entering short ",symbols[i],". Last error: ",GetLastError());}
                //while(!SellAsync(Lots,symbols[0])){Sleep(100);}
                shortPos[i] = true;
             }
          }
       }
+      
+       
    }
 }
 
@@ -194,7 +216,32 @@ void OnTick(){
 
 double OnTester()  {
    
-   return(0.0);
+   double rtn = 0.0;
+   double backProf = 0.0;
+   double foreProf = 0.0;
+   
+   datetime from_date = D'1970.01.01';
+   datetime to_date = D'2030.01.01';
+   HistorySelect(from_date,to_date);
+	for(int i = 2;i<HistoryDealsTotal(); i+=2) {
+	   int posMagic = HistoryOrderGetInteger(HistoryOrderGetTicket(int(i/2)),ORDER_MAGIC);
+      //double profit = HistoryOrderGetDouble(HistoryOrderGetTicket(int(i/2)),);
+      double profit = HistoryDealGetDouble(HistoryDealGetTicket(i),DEAL_PROFIT);
+      Alert("i: ",i," Magic: ",posMagic," profit: ",profit);
+      if(posMagic < 1000){
+         backProf += profit;
+         Alert("BackProf: ",backProf);
+      } else {
+         foreProf += profit;
+         Alert("ForeProf: ",foreProf);
+      }
+   }
+
+   if((backProf * timeMultiplier) < (foreProf + 10) && (backProf * timeMultiplier) > (foreProf - 10)){
+      rtn = backProf;
+   }
+   
+   return(rtn);
 }
 
 

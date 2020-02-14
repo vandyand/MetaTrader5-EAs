@@ -607,7 +607,7 @@ double get_score(){
 	double sumsqrs = 0.0;
 	
    datetime from_date = D'1970.01.01';
-   datetime to_date = D'2020.01.01';
+   datetime to_date = D'2030.01.01';
    HistorySelect(from_date,to_date);
 	Alert("HistoryDealsTotal(): ",HistoryDealsTotal(),"*********************************");
 	
