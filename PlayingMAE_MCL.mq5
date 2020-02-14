@@ -184,9 +184,13 @@ void OnTick(){
       }
       
       if(TransitionONS){
+         Alert("************************* Magic Updating!!! **********************************************");
          for(int i = 0; i < 7; i++){
+            Alert("Original Magic: ",Magic[i]);
             Magic[i] = Magic[i] + 100;
+            Alert("Updated Magic: ",Magic[i]);
          }
+         Alert("************************* Magic Updated!!! **********************************************");
       }
       
       for(int i = 0; i < 7; i++){
@@ -206,7 +210,6 @@ void OnTick(){
          }
       }
       
-       
    }
 }
 
@@ -217,33 +220,37 @@ void OnTick(){
 double OnTester()  {
    
    double rtn = 0.0;
-   double backProf = 0.0;
-   double foreProf = 0.0;
    
-   datetime from_date = D'1970.01.01';
-   datetime to_date = D'2030.01.01';
-   HistorySelect(from_date,to_date);
-	for(int i = 2;i<HistoryDealsTotal(); i+=2) {
-	   int posMagic = HistoryOrderGetInteger(HistoryOrderGetTicket(int(i/2)),ORDER_MAGIC);
-      //double profit = HistoryOrderGetDouble(HistoryOrderGetTicket(int(i/2)),);
-      double profit = HistoryDealGetDouble(HistoryDealGetTicket(i),DEAL_PROFIT);
-      Alert("i: ",i," Magic: ",posMagic," profit: ",profit);
-      if(posMagic < 1000){
-         backProf += profit;
-         Alert("BackProf: ",backProf);
-      } else {
-         foreProf += profit;
-         Alert("ForeProf: ",foreProf);
-      }
-   }
-
-   if((backProf * timeMultiplier) < (foreProf + 10) && (backProf * timeMultiplier) > (foreProf - 10)){
-      rtn = backProf;
+   double backProf = backProfit();
+   double totalProf = TesterStatistics(STAT_PROFIT);
+   double foreProf = totalProf - backProf;
+   
+   if((backProf * timeMultiplier) < (foreProf - 10) && (backProf * timeMultiplier) > (foreProf - 20)){
+      //rtn = backProf;
+      rtn = backProf > 0 ? 1 : -1;
    }
    
    return(rtn);
 }
 
+double backProfit(){
+   double Res = 0;
+
+   if(HistorySelect(0, INT_MAX)){
+      for (int i = HistoryDealsTotal() - 1; i > 0; i--){
+         
+         ulong Ticket = HistoryDealGetTicket(i);
+         datetime openTime = HistoryDealGetInteger(Ticket,DEAL_TIME);
+         bool cond = openTime < splitDate;
+         
+         if(cond){
+            Res += HistoryDealGetDouble(Ticket, DEAL_PROFIT);
+         }
+      }
+   }
+   
+   return(Res);
+}
 
 
 bool BuyAsync(double volume, int magicNum, string symbol){
