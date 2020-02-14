@@ -68,6 +68,24 @@ input int ma_period7_6 = 4;
 input int ma_period7_7 = 2;
 input int ma_period7_8 = 4;
 
+input int ma_period8_1 = 2;
+input int ma_period8_2 = 4;
+input int ma_period8_3 = 2;
+input int ma_period8_4 = 4;
+input int ma_period8_5 = 2;
+input int ma_period8_6 = 4;
+input int ma_period8_7 = 2;
+input int ma_period8_8 = 4;
+
+input int ma_period9_1 = 2;
+input int ma_period9_2 = 4;
+input int ma_period9_3 = 2;
+input int ma_period9_4 = 4;
+input int ma_period9_5 = 2;
+input int ma_period9_6 = 4;
+input int ma_period9_7 = 2;
+input int ma_period9_8 = 4;
+
 
 input int iter = 0;
 //input double drawDown = 0.9995;
@@ -82,32 +100,35 @@ double stat_values[100]; // Array for testing parameters
 bool stopTrading = false;
 
 
-bool longPos[7],shortPos[7],
-     EnterLongSignal[7],ExitLongSignal[7], EnterShortSignal[7], ExitShortSignal[7],
-     EntLRE0[7], EntLRE1[7], ExtLRE0[7], ExtLRE1[7], EntSRE0[7], EntSRE1[7], ExtSRE0[7], ExtSRE1[7]
-     = {false,false,false,false,false,false,false};
-int Magic[7];
-int ma_period[7][8];
+string symbols[9] = {"EURUSD","AUDUSD","USDJPY","GBPUSD","USDCHF","NZDUSD","USDCAD","EURGBP","AUDJPY"};
+
+
+bool longPos[9],shortPos[9],
+     EnterLongSignal[9],ExitLongSignal[9], EnterShortSignal[9], ExitShortSignal[9],
+     EntLRE0[9], EntLRE1[9], ExtLRE0[9], ExtLRE1[9], EntSRE0[9], EntSRE1[9], ExtSRE0[9], ExtSRE1[9]
+     = {false,false,false,false,false,false,false,false,false};
+int Magic[9];
+int ma_period[9][8];
 
 
 
 
-int maHandle[7][8];
-double mas[7][8][1];
-double MA[7][8];
+int maHandle[9][8];
+double mas[9][8][1];
+double MA[9][8];
 
-string symbols[7] = {"EURUSD","AUDUSD","USDJPY","GBPUSD","USDCHF","NZDUSD","USDCAD"};
 
 int OnInit(){
 
-   // Assign input values to arrays
-   ma_period[0][0] = ma_period1_1;ma_period[0][1] = ma_period1_2;ma_period[0][2] = ma_period1_3;ma_period[0][3] = ma_period1_4;ma_period[0][4] = ma_period1_5;ma_period[0][5] = ma_period1_6;ma_period[0][6] = ma_period1_7;ma_period[0][7] = ma_period1_8;   ma_period[1][0] = ma_period2_1;ma_period[1][1] = ma_period2_2;ma_period[1][2] = ma_period2_3;ma_period[1][3] = ma_period2_4;ma_period[1][4] = ma_period2_5;ma_period[1][5] = ma_period2_6;ma_period[1][6] = ma_period2_7;ma_period[1][7] = ma_period2_8;  ma_period[2][0] = ma_period3_1;ma_period[2][1] = ma_period3_2;ma_period[2][2] = ma_period3_3;ma_period[2][3] = ma_period3_4;ma_period[2][4] = ma_period3_5;ma_period[2][5] = ma_period3_6;ma_period[2][6] = ma_period3_7;ma_period[2][7] = ma_period3_8;   ma_period[3][0] = ma_period4_1;ma_period[3][1] = ma_period4_2;ma_period[3][2] = ma_period4_3;ma_period[3][3] = ma_period4_4;ma_period[3][4] = ma_period4_5;ma_period[3][5] = ma_period4_6;ma_period[3][6] = ma_period4_7;ma_period[3][7] = ma_period4_8;   ma_period[4][0] = ma_period5_1;ma_period[4][1] = ma_period5_2;ma_period[4][2] = ma_period5_3;ma_period[4][3] = ma_period5_4;ma_period[4][4] = ma_period5_5;ma_period[4][5] = ma_period5_6;ma_period[4][6] = ma_period5_7;ma_period[4][7] = ma_period5_8;   ma_period[5][0] = ma_period6_1;ma_period[5][1] = ma_period6_2;ma_period[5][2] = ma_period6_3;ma_period[5][3] = ma_period6_4;ma_period[5][4] = ma_period6_5;ma_period[5][5] = ma_period6_6;ma_period[5][6] = ma_period6_7;ma_period[5][7] = ma_period6_8;   ma_period[6][0] = ma_period7_1;ma_period[6][1] = ma_period7_2;ma_period[6][2] = ma_period7_3;ma_period[6][3] = ma_period7_4;ma_period[6][4] = ma_period7_5;ma_period[6][5] = ma_period7_6;ma_period[6][6] = ma_period7_7;ma_period[6][7] = ma_period7_8;
 
-   for(int i = 0; i < 7; i++){
+   // Assign input values to arrays
+   ma_period[0][0] = ma_period1_1;ma_period[0][1] = ma_period1_2;ma_period[0][2] = ma_period1_3;ma_period[0][3] = ma_period1_4;ma_period[0][4] = ma_period1_5;ma_period[0][5] = ma_period1_6;ma_period[0][6] = ma_period1_7;ma_period[0][7] = ma_period1_8;   ma_period[1][0] = ma_period2_1;ma_period[1][1] = ma_period2_2;ma_period[1][2] = ma_period2_3;ma_period[1][3] = ma_period2_4;ma_period[1][4] = ma_period2_5;ma_period[1][5] = ma_period2_6;ma_period[1][6] = ma_period2_7;ma_period[1][7] = ma_period2_8;  ma_period[2][0] = ma_period3_1;ma_period[2][1] = ma_period3_2;ma_period[2][2] = ma_period3_3;ma_period[2][3] = ma_period3_4;ma_period[2][4] = ma_period3_5;ma_period[2][5] = ma_period3_6;ma_period[2][6] = ma_period3_7;ma_period[2][7] = ma_period3_8;   ma_period[3][0] = ma_period4_1;ma_period[3][1] = ma_period4_2;ma_period[3][2] = ma_period4_3;ma_period[3][3] = ma_period4_4;ma_period[3][4] = ma_period4_5;ma_period[3][5] = ma_period4_6;ma_period[3][6] = ma_period4_7;ma_period[3][7] = ma_period4_8;   ma_period[4][0] = ma_period5_1;ma_period[4][1] = ma_period5_2;ma_period[4][2] = ma_period5_3;ma_period[4][3] = ma_period5_4;ma_period[4][4] = ma_period5_5;ma_period[4][5] = ma_period5_6;ma_period[4][6] = ma_period5_7;ma_period[4][7] = ma_period5_8;   ma_period[5][0] = ma_period6_1;ma_period[5][1] = ma_period6_2;ma_period[5][2] = ma_period6_3;ma_period[5][3] = ma_period6_4;ma_period[5][4] = ma_period6_5;ma_period[5][5] = ma_period6_6;ma_period[5][6] = ma_period6_7;ma_period[5][7] = ma_period6_8;   ma_period[6][0] = ma_period7_1;ma_period[6][1] = ma_period7_2;ma_period[6][2] = ma_period7_3;ma_period[6][3] = ma_period7_4;ma_period[6][4] = ma_period7_5;ma_period[6][5] = ma_period7_6;ma_period[6][6] = ma_period7_7;ma_period[6][7] = ma_period7_8;   ma_period[7][0] = ma_period8_1;   ma_period[7][1] = ma_period8_2;   ma_period[7][2] = ma_period8_3;   ma_period[7][3] = ma_period8_4;   ma_period[7][4] = ma_period8_5;   ma_period[7][5] = ma_period8_6;   ma_period[7][6] = ma_period8_7;   ma_period[7][7] = ma_period8_8;   ma_period[8][0] = ma_period9_1;   ma_period[8][1] = ma_period9_2;   ma_period[8][2] = ma_period9_3;   ma_period[8][3] = ma_period9_4;   ma_period[8][4] = ma_period9_5;   ma_period[8][5] = ma_period9_6;   ma_period[8][6] = ma_period9_7;   ma_period[8][7] = ma_period9_8;
+   
+   for(int i = 0; i < 9; i++){
       Magic[i] = MagicNumber + i;
    }
    
-   for(int i = 0; i < 7; i++){
+   for(int i = 0; i < 9; i++){
       for(int j = 0; j < 8; j++){
          maHandle[i][j] = iMA(symbols[i],_Period,ma_period[i][j],0,MODE_SMA,PRICE_OPEN);
       }
@@ -138,14 +159,14 @@ void OnTick(){
    if(Find_New_Bar()){
       barNum++;
       
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < 9; i++){
          EntLRE1[i] = EntLRE0[i];
          ExtLRE1[i] = ExtLRE0[i];
          EntSRE1[i] = EntSRE0[i];
          ExtSRE1[i] = ExtSRE0[i];
       }
       
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < 9; i++){
          for(int j = 0; j < 8; j++){
             double holder[1];
             CopyBuffer(maHandle[i][j],0,0,1,holder);
@@ -153,27 +174,27 @@ void OnTick(){
          }
       }
       
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < 9; i++){
          for(int j = 0; j < 8; j++){
             MA[i][j] = mas[i][j][0];
          }
       }
       
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < 9; i++){
          if(MA[i][0] > MA[i][1]){EntLRE0[i] = true;} else {EntLRE0[i] = false;}
          if(MA[i][2] > MA[i][3]){ExtLRE0[i] = true;} else {ExtLRE0[i] = false;}
          if(MA[i][4] > MA[i][5]){EntSRE0[i] = true;} else {EntSRE0[i] = false;}
          if(MA[i][6] > MA[i][7]){ExtSRE0[i] = true;} else {ExtSRE0[i] = false;}
       }
       
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < 9; i++){
          if(!EntLRE1[i] && EntLRE0[i]){EnterLongSignal[i] = true;} else {EnterLongSignal[i] = false;}
          if(!ExtLRE1[i] && ExtLRE0[i]){ExitLongSignal[i] = true;} else {ExitLongSignal[i] = false;}
          if(!EntSRE1[i] && EntSRE0[i]){EnterShortSignal[i] = true;} else {EnterShortSignal[i] = false;}
          if(!ExtSRE1[i] && ExtSRE0[i]){ExitShortSignal[i] = true;} else {ExitShortSignal[i] = false;}
       }
       
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < 9; i++){
          if((longPos[i] && ExitLongSignal[i]) || (shortPos[i] && ExitShortSignal[i]) || TransitionONS){
             Alert("Exiting Position. Currency: ",symbols[i]," MagicNumber: ",Magic[i]," ----------------------------------------------------------");
             CloseRecentPosition(Magic[i]);
@@ -185,7 +206,7 @@ void OnTick(){
       
       if(TransitionONS){
          Alert("************************* Magic Updating!!! **********************************************");
-         for(int i = 0; i < 7; i++){
+         for(int i = 0; i < 9; i++){
             Alert("Original Magic: ",Magic[i]);
             Magic[i] = Magic[i] + 100;
             Alert("Updated Magic: ",Magic[i]);
@@ -193,7 +214,7 @@ void OnTick(){
          Alert("************************* Magic Updated!!! **********************************************");
       }
       
-      for(int i = 0; i < 7; i++){
+      for(int i = 0; i < 9; i++){
          if(CurrentOpenPositions(Magic[i]) < 1){
             if(EnterLongSignal[i] && !EnterShortSignal[i] && !ExitLongSignal[i]){
                Alert("Entering Long Position. Currency: ",symbols[i]," MagicNumber: ",Magic[i]," *************************************************");
@@ -229,6 +250,20 @@ double OnTester()  {
       //rtn = backProf;
       rtn = backProf > 0 ? 1 : -1;
    }
+   
+   
+   int arg = 0;
+   for(int i = 0; i < 9; i++){
+      for(int j = 0; j < 8; j++){
+         arg += ma_period[i][j];
+      }
+   }
+   
+   double _max = 1.0;
+   double _min = 0;
+   double rand_scaled = ((GetMicrosecondCount()+arg)%100 / 100.0) * (_max - _min) + _min;
+   
+   rtn *= rand_scaled;
    
    return(rtn);
 }
