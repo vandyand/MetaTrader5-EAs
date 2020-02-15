@@ -195,6 +195,8 @@ int ma_period[16][8];
 int maHandle[16][8];
 double mas[16][8][1];
 double MA[16][8];
+double price[16][8];
+double rel[16][8];
 
 
 int OnInit(){
@@ -328,14 +330,16 @@ void OnTick(){
       for(int i = 0; i < 16; i++){
          for(int j = 0; j < 8; j++){
             MA[i][j] = mas[i][j][0];
+            price[i][j] = NormalizeDouble(SymbolInfoDouble(symbols[i],SYMBOL_ASK),SymbolInfoInteger(symbols[i],SYMBOL_DIGITS));
+            rel[i][j] = MA[i][j] / price[i][j];
          }
       }
       
       for(int i = 0; i < 16; i++){
-         if(MA[i][0] > MA[i][1]){EntLRE0[i] = true;} else {EntLRE0[i] = false;}
-         if(MA[i][2] > MA[i][3]){ExtLRE0[i] = true;} else {ExtLRE0[i] = false;}
-         if(MA[i][4] > MA[i][5]){EntSRE0[i] = true;} else {EntSRE0[i] = false;}
-         if(MA[i][6] > MA[i][7]){ExtSRE0[i] = true;} else {ExtSRE0[i] = false;}
+         if(rel[i][0] > rel[i][1]){EntLRE0[i] = true;} else {EntLRE0[i] = false;}
+         if(rel[i][2] > rel[i][3]){ExtLRE0[i] = true;} else {ExtLRE0[i] = false;}
+         if(rel[i][4] > rel[i][5]){EntSRE0[i] = true;} else {EntSRE0[i] = false;}
+         if(rel[i][6] > rel[i][7]){ExtSRE0[i] = true;} else {ExtSRE0[i] = false;}
       }
       
       for(int i = 0; i < 16; i++){
@@ -424,6 +428,8 @@ double OnTester()  {
    double _min = 0;
    double rand_scaled = ((GetMicrosecondCount()+arg)%100 / 100.0) * (_max - _min) + _min;
    
+   rtn = totalProf;
+
    rtn *= rand_scaled;
    
    return(rtn);
