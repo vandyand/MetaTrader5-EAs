@@ -147,7 +147,7 @@ input int ma_shift16_1 = 0;
 input int ma_shift16_2 = 0;
 input int ma_shift16_3 = 0;
 input int ma_shift16_4 = 0;
-
+   
 input int open_bars1 = 5;
 input int open_bars2 = 5;
 input int open_bars3 = 5;
