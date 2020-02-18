@@ -404,18 +404,19 @@ double OnTester()  {
    double threshold_upper = totalProf / 3.0 + 5;
    double threshold_lower = totalProf / 3.0 - 5;
 
-   /*   
-   if((backProf * timeMultiplier) < (foreProf - 10) && (backProf * timeMultiplier) > (foreProf - 20)){
-      //rtn = backProf;
-      rtn = backProf > 0 ? 1 : -1;
+   
+   if(backProf > 0 && totalProf > backProf){
+      rtn = backProf;
+      //rtn = backProf > 0 ? 1 : -1;
    }
-   */
-
+   
+   /*
    if(backProf > threshold_lower && foreProf > threshold_lower && verifyProf > threshold_lower
    && backProf < threshold_upper && foreProf < threshold_upper && verifyProf < threshold_upper){
       rtn = backProf;
       //rtn = backProf > 0 ? 1 : -1;      
    }
+   */
    
    int arg = 0;
    for(int i = 0; i < 16; i++){
@@ -428,7 +429,7 @@ double OnTester()  {
    double _min = 0;
    double rand_scaled = ((GetMicrosecondCount()+arg)%100 / 100.0) * (_max - _min) + _min;
    
-   rtn = totalProf;
+   //rtn = totalProf;
 
    rtn *= rand_scaled;
    
